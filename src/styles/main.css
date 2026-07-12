@@ -1327,7 +1327,7 @@ code {
     padding: var(--sp-xs);
   }
   .attribution {
-    display: none;
+    font-size: 10px;
   }
 }
 
