@@ -24,10 +24,11 @@
     <!-- Security: lock the page to its own origin. No network access is needed at runtime. -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none';"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://cloudflareinsights.com; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'"
     />
 
     <link rel="stylesheet" href="/src/styles/main.css" />
+    <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "ba2bab2193ba42c1bea3d6714fcd0e28"}'></script>
   </head>
   <body>
     <div class="app-shell">
@@ -83,7 +84,7 @@
         <div>
           <span id="sb-exp"></span>
           <span id="sb-verify"></span>
-          <span class="attribution">Built by <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a></span>
+          <span class="attribution">Built by <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a> · <a href="https://hub.benrichardson.dev" target="_blank" rel="noopener">more tools &amp; sites</a></span>
         </div>
       </footer>
     </div>
