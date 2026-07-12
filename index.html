@@ -179,7 +179,7 @@
             <h3>trust model</h3>
             <ul>
               <li>The static bundle (hash-pinned by the GitHub Pages deploy) and the TLS chain to GitHub Pages</li>
-              <li>Zero third-party scripts, fonts, analytics or trackers — CSP restricts all network access to <code>'self'</code></li>
+              <li>No third-party fonts or trackers; your tokens never leave the device. The CSP allows only the app itself plus the cookie-less Cloudflare Web Analytics beacon</li>
               <li>No JWKS is fetched: you paste the key, so no third party learns which key you're checking</li>
             </ul>
           </div>
@@ -208,7 +208,7 @@
           <a href="https://github.com/ben-gy/tokenpeek" target="_blank" rel="noopener noreferrer">GitHub</a>.
         </p>
         <p class="about-foot">
-          No analytics · no cookies · no third-party fonts · works offline.
+          No cookies · no fingerprinting · no third-party fonts · works offline. Only analytics: anonymous, cookie-less page-view counts via Cloudflare Web Analytics.
         </p>
       </div>
     </template>

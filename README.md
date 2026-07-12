@@ -98,8 +98,9 @@ main thread never freezes.
 
 - The static bundle (hash-pinned by the GitHub Pages deploy) and the TLS chain
   to GitHub Pages.
-- Zero third-party scripts, fonts, analytics or trackers. A strict CSP meta tag
-  restricts all network access to `'self'`.
+- No third-party fonts or trackers; your tokens never leave the device. A strict
+  CSP meta tag allows only the app itself plus the cookie-less Cloudflare Web
+  Analytics beacon (anonymous page-view counts — no personal data).
 - No JWKS is fetched over the network — you paste the key, so no third party
   ever learns which key you're checking.
 
@@ -110,8 +111,9 @@ main thread never freezes.
 - Vitest for unit tests (42 tests across decoding + crypto round-trips)
 - GitHub Pages for hosting, deployed via GitHub Actions
 
-No runtime dependencies. No analytics, no cookies, no third-party fonts, no
-telemetry.
+No runtime dependencies. No cookies, no fingerprinting, no third-party fonts.
+The only analytics is Cloudflare Web Analytics — anonymous, cookie-less
+page-view counts; no personal data, no cross-site tracking.
 
 ## local development
 
