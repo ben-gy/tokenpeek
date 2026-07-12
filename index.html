@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#0a0e17" />
+
+    <title>tokenpeek — offline JWT decoder, verifier & cracker</title>
+    <meta
+      name="description"
+      content="Decode, inspect, verify, crack weak secrets and forge JSON Web Tokens entirely in your browser. No uploads — your token and keys never leave the device. Works offline."
+    />
+
+    <!-- Open Graph / social preview -->
+    <meta property="og:title" content="tokenpeek — offline JWT toolkit" />
+    <meta
+      property="og:description"
+      content="Decode, inspect, verify and crack JWTs in your browser. Nothing is uploaded. The offline jwt.io alternative."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Security: lock the page to its own origin. No network access is needed at runtime. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none';"
+    />
+
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="topbar-left">
+          <a class="brand" href="/">
+            <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+              <defs>
+                <linearGradient id="tp-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#2dd4bf" />
+                  <stop offset="100%" stop-color="#0ea5e9" />
+                </linearGradient>
+              </defs>
+              <rect x="3" y="7" width="6" height="3.2" rx="1" fill="#e879f9" />
+              <rect x="10.5" y="7" width="9" height="3.2" rx="1" fill="#22d3ee" />
+              <rect x="21" y="7" width="4" height="3.2" rx="1" fill="#f59e0b" />
+              <circle cx="13" cy="19" r="7" fill="none" stroke="url(#tp-grad)" stroke-width="2.6" />
+              <circle cx="13" cy="19" r="2.6" fill="#22d3ee" opacity="0.85" />
+              <line x1="18.2" y1="24.2" x2="26" y2="28" stroke="url(#tp-grad)" stroke-width="2.8" stroke-linecap="round" />
+            </svg>
+            <span class="brand-name">token<span class="brand-name-accent">peek</span></span>
+          </a>
+          <div class="topbar-meta" id="topbar-meta">
+            <span><span class="meta-key">spec</span> <span class="meta-val">jws / rfc 7519</span></span>
+            <span><span class="meta-key">crypto</span> <span class="meta-val">webcrypto</span></span>
+            <span><span class="meta-key">backend</span> <span class="meta-val">none</span></span>
+          </div>
+        </div>
+        <nav class="topbar-nav">
+          <button type="button" class="nav-link" data-modal="tmpl-how-it-works">how it works</button>
+          <button type="button" class="nav-link" data-modal="tmpl-security">threat model</button>
+          <button type="button" class="nav-link" data-modal="tmpl-about">about</button>
+        </nav>
+      </header>
+
+      <div class="main-grid">
+        <main id="app">
+          <!-- populated by src/main.ts -->
+        </main>
+        <aside id="event-drawer">
+          <!-- populated by src/eventlog.ts -->
+        </aside>
+      </div>
+
+      <footer class="statusbar">
+        <div>
+          <span class="status-pill">
+            <span class="dot-mini idle" id="sb-status-dot"></span>
+            <span class="label" id="sb-status-label">no token</span>
+          </span>
+          <span id="sb-alg" class="status-pill"></span>
+        </div>
+        <div>
+          <span id="sb-exp"></span>
+          <span id="sb-verify"></span>
+          <span class="attribution">Built by <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a></span>
+        </div>
+      </footer>
+    </div>
+
+    <template id="tmpl-how-it-works">
+      <div class="modal-content">
+        <h2 class="modal-title">how it works</h2>
+        <ol class="steps">
+          <li>
+            <span class="step-num">01</span>
+            <div>
+              <h3>paste a token</h3>
+              <p>
+                Drop in a JWT — by paste, <code>Cmd/Ctrl+V</code>, the clipboard
+                button, or by dragging a <code>.txt</code>/<code>.jwt</code> file.
+                It stays in this tab's memory; it is never sent anywhere, never
+                stored, never put in the URL.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">02</span>
+            <div>
+              <h3>decode locally</h3>
+              <p>
+                tokenpeek splits the token on its dots and base64url-decodes the
+                header and payload right here in JavaScript. Standard claims
+                (<code>exp</code>, <code>nbf</code>, <code>iat</code>, …) are
+                rendered as human-readable times with a live expiry badge.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">03</span>
+            <div>
+              <h3>verify the signature</h3>
+              <p>
+                Paste the HMAC secret (HS256/384/512) or the public key as PEM or
+                JWK (RS/PS/ES/EdDSA). The Web Crypto API verifies the signature
+                in-browser and tells you pass or fail — and exactly why.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">04</span>
+            <div>
+              <h3>crack weak secrets</h3>
+              <p>
+                For HS256-family tokens, run the signature against a built-in
+                weak-secret wordlist (and your own list) in a Web Worker. If the
+                secret is guessable, tokenpeek finds it — locally, with a live
+                throughput readout. Great for auditing your own APIs.
+              </p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">05</span>
+            <div>
+              <h3>forge &amp; generate</h3>
+              <p>
+                Edit the header/payload and re-sign to mint a test token, or
+                generate a fresh RSA/EC keypair as PEM. Everything is produced by
+                Web Crypto in your browser — copy or download, nothing uploads.
+              </p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </template>
+
+    <template id="tmpl-security">
+      <div class="modal-content">
+        <h2 class="modal-title">threat model</h2>
+        <div class="security-grid">
+          <div class="security-card good">
+            <h3>what's protected</h3>
+            <ul>
+              <li>The token — decoded entirely in-tab, never uploaded, never stored, never placed in the URL</li>
+              <li>Any secret, PEM or JWK you paste to verify, crack or sign — used only in memory by Web Crypto</li>
+              <li>Generated private keys — created in your browser and never transmitted</li>
+            </ul>
+          </div>
+          <div class="security-card bad">
+            <h3>what isn't</h3>
+            <ul>
+              <li>The first page load comes from GitHub Pages' CDN, which sees your IP and that you opened tokenpeek (not your token). After that the PWA runs fully offline</li>
+              <li>A JWT is <em>not</em> encrypted — anyone holding the token can read its claims; tokenpeek just shows you that</li>
+              <li>The crack wordlist only catches <em>weak</em> secrets — "not found" is not proof a secret is strong</li>
+            </ul>
+          </div>
+          <div class="security-card">
+            <h3>trust model</h3>
+            <ul>
+              <li>The static bundle (hash-pinned by the GitHub Pages deploy) and the TLS chain to GitHub Pages</li>
+              <li>Zero third-party scripts, fonts, analytics or trackers — CSP restricts all network access to <code>'self'</code></li>
+              <li>No JWKS is fetched: you paste the key, so no third party learns which key you're checking</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-about">
+      <div class="modal-content">
+        <h2 class="modal-title">about tokenpeek</h2>
+        <p class="about-lede">
+          The offline alternative to "JWT decoder" websites. tokenpeek decodes,
+          inspects, verifies, cracks weak secrets, and forges JSON Web Tokens —
+          all in your browser, with zero backend and zero runtime dependencies.
+        </p>
+        <p>
+          Built because pasting a production access token into a random online
+          decoder is a genuine security risk: that token may carry real
+          credentials and PII. tokenpeek gives you the same workflow without ever
+          letting a byte leave your machine.
+        </p>
+        <p>
+          Made by
+          <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a>.
+          Source on
+          <a href="https://github.com/ben-gy/tokenpeek" target="_blank" rel="noopener noreferrer">GitHub</a>.
+        </p>
+        <p class="about-foot">
+          No analytics · no cookies · no third-party fonts · works offline.
+        </p>
+      </div>
+    </template>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
