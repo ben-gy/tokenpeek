@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+// Copyright (C) 2026 Ben Richardson — https://benrichardson.dev
+// Additional terms under AGPL-3.0 section 7(b) apply; see ADDITIONAL-TERMS.md.
 /**
  * glossary.ts — jargon → plain-English definitions, plus a click-to-define
  * tooltip system. Any element with `data-term="key"` becomes a glossary link.

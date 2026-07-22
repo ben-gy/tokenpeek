@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "description": "Decode, inspect, verify, crack and forge JSON Web Tokens entirely in your browser — nothing is ever uploaded.",
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
