@@ -7,11 +7,6 @@
  * crypto.ts / worker.ts; this file is orchestration and DOM.
  */
 
-// feedback:begin (managed by hub/scripts/feedback/backfill.mjs)
-import { mountFeedback } from './feedback';
-mountFeedback();
-// feedback:end
-
 import './styles/main.css';
 
 import { decodeJwt, analyzeClaims, isHmacAlg, isKnownAlg, prettyJson, formatRelative } from './jwt';
